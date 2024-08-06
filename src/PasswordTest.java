@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -43,23 +45,31 @@ public class PasswordTest {
         vars = new HashMap<String, Object>();
     }
 
-    @DisplayName("Expectated")
-    @Test
-    public void expected() {
+    @DisplayName("Unexpected")
+    @CsvFileSource(resources = "./passwordTestValuesUnexpected.csv")
+    @ParameterizedTest
+    public void unexpected(String emailExtension, String Password) throws InterruptedException {
         driver.get("https://www.airbnb.com/");
         driver.manage().window().setSize(new Dimension(800, 816));
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Thread.sleep(10000);
+
+        if (isElementPresent(driver, By.xpath("/html/body/div[12]/div/div/section/div/div/div[2]/div/div[1]/button"))){
+            driver.findElement(By.xpath("/html/body/div[12]/div/div/section/div/div/div[2]/div/div[1]/button")).click();
+        }
 
         //driver.findElement(By.className(".i3tjjh1")).click();
 
-
+        Thread.sleep(1000);
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".fs7xov7")).click();
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.cssSelector(".fs7xov7"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.tagName("body"));
             Actions builder = new Actions(driver);
@@ -68,6 +78,7 @@ public class PasswordTest {
         driver.findElement(By.cssSelector(".lgh3vnd")).click();
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".\\_jwti9r > .l1ovpqvx .\\_bc4egv")).click();
+        Thread.sleep(1000);
 
 
         //driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
@@ -76,37 +87,40 @@ public class PasswordTest {
         //Choose email login
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.id("email-login-email")).click();
+        Thread.sleep(1000);
 
         //Enter Email
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(By.id("email-login-email")).sendKeys("se2226testmail+test1@gmail.com");
+        String email = "se2226testmail+" + emailExtension + "@gmail.com";
+        driver.findElement(By.id("email-login-email")).sendKeys(email);
 
         //Wait for page to load
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".t1dqvypu")).click();
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.cssSelector(".t1dqvypu"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
 
-
+        Thread.sleep(1000);
         //Enter Username
         driver.findElement(By.id("email-signup-user[first_name]")).click();
-        driver.findElement(By.id("email-signup-user[first_name]")).sendKeys("Yasar");
-
+        driver.findElement(By.id("email-signup-user[first_name]")).sendKeys("John");
+        Thread.sleep(1000);
         //Enter Last name
         driver.findElement(By.cssSelector(".r1el1iwj:nth-child(2) .ihbwjpb")).click();
-        driver.findElement(By.id("email-signup-user[last_name]")).sendKeys("Uni");
-
+        driver.findElement(By.id("email-signup-user[last_name]")).sendKeys("Doe");
+        Thread.sleep(1000);
         //Enter Birtday
         driver.findElement(By.cssSelector(".ie56xu4 > .atm_k4_idpfg4")).click();
         driver.findElement(By.id("email-signup-date")).sendKeys("1992-12-07");
-
+        Thread.sleep(1000);
         //Enter password
         driver.findElement(By.id("email-signup-password")).click();
-        driver.findElement(By.id("email-signup-password")).sendKeys("acceptthispassword!");
-
+        driver.findElement(By.id("email-signup-password")).sendKeys(Password);
+        Thread.sleep(1000);
         //Check if the invalid warning is displayed
         driver.findElement(By.xpath("/html/body/div[10]/div/section/div/div/div[2]/div/div[2]/div/section/div/form/div[7]/button")).click();
         assertTrue(isElementPresent(driver,By.xpath("/html/body/div[10]/div/section/div/div/div[2]/div/div[2]/div/section/div/form/div[4]/fieldset/div[1]/div[2]/div/div")));
@@ -114,70 +128,81 @@ public class PasswordTest {
 
 
 
-    @DisplayName("Unexpectated")
-    @Test
-    public void unexpected() {
+    @DisplayName("Expectated")
+    @CsvFileSource(resources = "./passwordTestValuesExpected.csv")
+    @ParameterizedTest
+    public void expected(String emailExtension, String Password) throws InterruptedException {
         driver.get("https://www.airbnb.com/");
         driver.manage().window().setSize(new Dimension(800, 816));
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Thread.sleep(10000);
+
+        if (isElementPresent(driver, By.xpath("/html/body/div[12]/div/div/section/div/div/div[2]/div/div[1]/button"))){
+            driver.findElement(By.xpath("/html/body/div[12]/div/div/section/div/div/div[2]/div/div[1]/button")).click();
+        }
 
         //driver.findElement(By.className(".i3tjjh1")).click();
 
-
+        Thread.sleep(1000);
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".fs7xov7")).click();
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.cssSelector(".fs7xov7"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.tagName("body"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element, 0, 0).perform();
         }
         driver.findElement(By.cssSelector(".lgh3vnd")).click();
+        Thread.sleep(1000);
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".\\_jwti9r > .l1ovpqvx .\\_bc4egv")).click();
 
 
         //driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         //driver.findElement(By.cssSelector(".\\_1gy58h7")).click();
-
+        Thread.sleep(1000);
         //Choose email login
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.findElement(By.id("email-login-email")).click();
-
+        Thread.sleep(1000);
         //Enter Email
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(By.id("email-login-email")).sendKeys("se2226testmail+test1@gmail.com");
-
+        String email = "se2226testmail+" + emailExtension + "@gmail.com";
+        driver.findElement(By.id("email-login-email")).sendKeys(email);
+        Thread.sleep(1000);
         //Wait for page to load
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".t1dqvypu")).click();
+        Thread.sleep(1000);
         {
             WebElement element = driver.findElement(By.cssSelector(".t1dqvypu"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
 
-
+        Thread.sleep(1000);
         //Enter Username
         driver.findElement(By.id("email-signup-user[first_name]")).click();
-        driver.findElement(By.id("email-signup-user[first_name]")).sendKeys("Yasar");
-
+        driver.findElement(By.id("email-signup-user[first_name]")).sendKeys("John");
+        Thread.sleep(1000);
         //Enter Last name
         driver.findElement(By.cssSelector(".r1el1iwj:nth-child(2) .ihbwjpb")).click();
-        driver.findElement(By.id("email-signup-user[last_name]")).sendKeys("Uni");
-
+        driver.findElement(By.id("email-signup-user[last_name]")).sendKeys("Doe");
+        Thread.sleep(1000);
         //Enter Birtday
         driver.findElement(By.cssSelector(".ie56xu4 > .atm_k4_idpfg4")).click();
         driver.findElement(By.id("email-signup-date")).sendKeys("1992-12-07");
-
+        Thread.sleep(1000);
         //Enter password
         driver.findElement(By.id("email-signup-password")).click();
-        driver.findElement(By.id("email-signup-password")).sendKeys("acceptthispassword!");
-
+        driver.findElement(By.id("email-signup-password")).sendKeys(Password);
+        Thread.sleep(1000);
         //Check if the invalid warning is displayed
         driver.findElement(By.xpath("/html/body/div[10]/div/section/div/div/div[2]/div/div[2]/div/section/div/form/div[7]/button")).click();
         assertFalse(isElementPresent(driver,By.xpath("/html/body/div[10]/div/section/div/div/div[2]/div/div[2]/div/section/div/form/div[4]/fieldset/div[1]/div[2]/div/div")));
@@ -188,6 +213,7 @@ public class PasswordTest {
             WebElement element = driver.findElement(by);
             return element.isDisplayed();
         } catch (org.openqa.selenium.NoSuchElementException e) {
+            System.out.println(e.getMessage());
             return false;
         }
     }

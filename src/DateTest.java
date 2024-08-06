@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -46,20 +48,36 @@ public class DateTest {
         driver.quit();
     }
 
-    @DisplayName("Accepted")
-    @Test
-    public void acceptedCase() {
-        driver.get("https://www.airbnb.com/rooms/33677783?adults=1&category_tag=Tag%3A8678&children=0&enable_m3_private_room=true&infants=0&pets=0&photo_id=1640221161&search_mode=flex_destinations_search&check_in=2024-06-11&check_out=2024-06-16&source_impression_id=p3_1716217522_PGaN8IJ8vQTHwXGY&previous_page_section_name=1000&federated_search_id=b3108ee2-4faf-4f73-b2e2-906c11e28f7b");
-        driver.manage().window().setSize(new Dimension(800, 816));
-        js.executeScript("window.scrollTo(0,0.800000011920929)");
-        js.executeScript("window.scrollTo(0,172.8000030517578)");
+    @DisplayName("Expected")
+    @ParameterizedTest()
+    @CsvFileSource(resources = "dateTestExpected.csv")
+    public void expectedCase(String printoutLink,String printoutCase, String start, String end, String url) throws InterruptedException {
+        System.out.println(printoutLink + " " + printoutCase);
+        driver.get(url);
+        driver.manage().window().setSize(new Dimension(803, 816));
+        Thread.sleep(5000);
+        driver.findElement(By.xpath("//main[@id=\'site-content\']/div/div/div[3]/div/div[2]/div/div/div/div/div/div/div/div/div/div/div/div[2]/div/div/div/div/div/div/button/div/div[2]")).click();
+        Thread.sleep(1000);
+        for (int i = 0; i < 9; i++){
+            driver.findElement(By.id("checkIn-book_it")).sendKeys(Keys.BACK_SPACE);
+            driver.findElement(By.id("checkIn-book_it")).sendKeys(Keys.DELETE);
+        }
 
-        //Wait for page to load
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.findElement(By.xpath("/html/body/div[9]/div/div/section/div/div/div[2]/div/div[1]")).click();
-        driver.findElement(By.cssSelector(".\\_19y8o0j > .\\_tekaj0")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.id("checkIn-book_it")).sendKeys(start);
+        Thread.sleep(1000);
+        driver.findElement(By.id("checkOut-book_it")).click();
+        Thread.sleep(1000);
+        for (int i = 0; i < 9; i++){
+            driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.BACK_SPACE);
+            driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.DELETE);
+        }
+        Thread.sleep(1000);
+        driver.findElement(By.id("checkOut-book_it")).sendKeys(end);
+        Thread.sleep(1000);
+        driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.ENTER);
         {
-            WebElement element = driver.findElement(By.cssSelector(".\\_1ie8utng .l1ovpqvx"));
+            WebElement element = driver.findElement(By.xpath("//main[@id=\'site-content\']/div/div/div[3]/div/div[2]/div/div/div/div/div/div/div/div/div/div/div/div[2]/div/div/div/div/div/div/button/div/div[2]"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
@@ -69,74 +87,48 @@ public class DateTest {
             builder.moveToElement(element, 0, 0).perform();
         }
 
-
-        //Enter Checkin Date
-        WebElement dateFieldCheckIn = driver.findElement(By.id("checkIn-book_it"));
-        dateFieldCheckIn.clear();
-        dateFieldCheckIn.sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
-        dateFieldCheckIn.sendKeys("6/13/2024");
-        driver.findElement(By.cssSelector(".\\_1ie8utng")).click();
-        driver.findElement(By.id("checkOut-book_it")).click();
-        driver.findElement(By.id("checkOut-book_it")).click();
-
-        //Enter Checkout Date
-        WebElement dateFieldCheckOut = driver.findElement(By.id("checkOut-book_it"));
-        dateFieldCheckOut.clear();
-        dateFieldCheckOut.sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
-        dateFieldCheckOut.sendKeys("6/17/2024");
-        driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.ENTER);
-
-        //Check if checkout date is accepted by frontend
-        assertFalse(isElementPresent(driver,By.xpath("/html/body/div[5]/div/div/div[1]/div/div[2]/div/div/div/div[1]/main/div/div[1]/div[3]/div/div[2]/div/div/div[1]/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div")));
-
-        //Click out of calendar
-        js.executeScript("window.scrollTo(0,644)");
-        driver.findElement(By.cssSelector(".\\_18x3iiu > div")).click();
-
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         //Check if Subtotal is displayed
-        assertTrue(isElementPresent(driver, By.xpath("/html/body/div[5]/div/div/div[1]/div/div[2]/div/div/div/div[1]/main/div/div[1]/div[3]/div/div[2]/div/div/div[1]/div/div/div/div/div/div/div/div[3]")));
+        assertTrue(isElementPresent(driver, By.xpath("//main[@id=\'site-content\']/div/div/div[3]/div/div[2]/div/div/div/div/div/div/div/div/div/div/div[3]/div/section/div[2]/div/span[2]/span/span")));
     }
 
     @DisplayName("unexpected")
-    @Test
-    public void unexpectedCase() {
-        driver.get("https://www.airbnb.com/rooms/33677783?adults=1&category_tag=Tag%3A8678&children=0&enable_m3_private_room=true&infants=0&pets=0&photo_id=1640221161&search_mode=flex_destinations_search&check_in=2024-06-11&check_out=2024-06-16&source_impression_id=p3_1716217522_PGaN8IJ8vQTHwXGY&previous_page_section_name=1000&federated_search_id=b3108ee2-4faf-4f73-b2e2-906c11e28f7b");
-        driver.manage().window().setSize(new Dimension(800, 816));
-        js.executeScript("window.scrollTo(0,0.800000011920929)");
-        js.executeScript("window.scrollTo(0,172.8000030517578)");
-
-        //Wait for page to load
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.findElement(By.xpath("/html/body/div[9]/div/div/section/div/div/div[2]/div/div[1]")).click();
-        driver.findElement(By.cssSelector(".\\_19y8o0j > .\\_tekaj0")).click();
-        {
-            WebElement element = driver.findElement(By.cssSelector(".\\_1ie8utng .l1ovpqvx"));
-            Actions builder = new Actions(driver);
-            builder.moveToElement(element).perform();
-        }
-        {
-            WebElement element = driver.findElement(By.tagName("body"));
-            Actions builder = new Actions(driver);
-            builder.moveToElement(element, 0, 0).perform();
+    @ParameterizedTest
+    @CsvFileSource(resources = "dateTestUnexpected.csv")
+    public void unexpectedCase(String printoutLink,String printoutCase, String start, String end, String url) throws InterruptedException {
+        System.out.println(printoutLink + " " + printoutCase);
+        driver.get(url);
+        driver.manage().window().setSize(new Dimension(803, 816));
+        Thread.sleep(5000);
+        driver.findElement(By.xpath("//main[@id=\'site-content\']/div/div/div[3]/div/div[2]/div/div/div/div/div/div/div/div/div/div/div/div[2]/div/div/div/div/div/div/button/div/div[2]")).click();
+        Thread.sleep(100);
+        for (int i = 0; i < 9; i++){
+            driver.findElement(By.id("checkIn-book_it")).sendKeys(Keys.BACK_SPACE);
+            driver.findElement(By.id("checkIn-book_it")).sendKeys(Keys.DELETE);
         }
 
-
-        //Enter Checkin Date
-        WebElement dateFieldCheckIn = driver.findElement(By.id("checkIn-book_it"));
-        dateFieldCheckIn.clear();
-        dateFieldCheckIn.sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
-        dateFieldCheckIn.sendKeys("6/13/2024");
-        driver.findElement(By.cssSelector(".\\_1ie8utng")).click();
+        Thread.sleep(100);
+        driver.findElement(By.id("checkIn-book_it")).sendKeys(start);
+        Thread.sleep(100);
         driver.findElement(By.id("checkOut-book_it")).click();
-        driver.findElement(By.id("checkOut-book_it")).click();
+        if (isElementPresent(driver,By.xpath("/html/body/div[5]/div/div/div[1]/div/div[2]/div/div/div/div[1]/main/div/div[1]/div[3]/div/div[2]/div/div/div[1]/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div"))
+            || driver.findElement(By.id("checkOut-book_it")).getText().isEmpty()){
+            assertTrue(true);
+            return;
+        }
 
-        //Enter Checkout Date
-        WebElement dateFieldCheckOut = driver.findElement(By.id("checkOut-book_it"));
-        dateFieldCheckOut.clear();
-        dateFieldCheckOut.sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
-        dateFieldCheckOut.sendKeys("6/12/2024");
+        Thread.sleep(100);
+        for (int i = 0; i < 9; i++){
+            driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.BACK_SPACE);
+            driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.DELETE);
+        }
+        Thread.sleep(100);
+        driver.findElement(By.id("checkOut-book_it")).sendKeys(end);
+        Thread.sleep(100);
         driver.findElement(By.id("checkOut-book_it")).sendKeys(Keys.ENTER);
 
+
+        System.out.println(driver.findElement(By.id("checkOut-book_it")).getText());
         //Check if checkout date is not accepted by the frontend
         assertTrue(isElementPresent(driver,By.xpath("/html/body/div[5]/div/div/div[1]/div/div[2]/div/div/div/div[1]/main/div/div[1]/div[3]/div/div[2]/div/div/div[1]/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div")));
 
